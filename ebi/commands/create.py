@@ -4,8 +4,10 @@ import sys
 import time
 
 from .. import appversion
+from utils import TemporaryMergedYaml
 
 logger = logging.getLogger(__name__)
+CONFIG_DELIMITER = ','
 
 
 def main(parsed):
@@ -23,11 +25,16 @@ def main(parsed):
                '--cname=' + parsed.cname]
     if parsed.profile:
         payload.append('--profile=' + parsed.profile)
-    if parsed.cfg:
-        payload.append('--cfg=' + parsed.cfg)
     if parsed.region:
         payload.append('--region=' + parsed.region)
-    sys.exit(subprocess.call(payload))
+
+    if not parsed.cfg:
+        sys.exit(subprocess.call(payload))
+
+    cfgs = parsed.cfg.split(CONFIG_DELIMITER)
+    with TemporaryMergedYaml(cfgs) as merged_config:
+        payload.append('--cfg=' + merged_config.name)
+        sys.exit(subprocess.call(payload))
 
 
 def apply_args(parser):
