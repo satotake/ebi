@@ -4,7 +4,7 @@ import sys
 import time
 
 from .. import appversion
-from utils import TemporaryMergedYaml
+from ..utils import TemporaryMergedYaml
 
 logger = logging.getLogger(__name__)
 CONFIG_DELIMITER = ','
